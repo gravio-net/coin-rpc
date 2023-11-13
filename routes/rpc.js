@@ -165,8 +165,10 @@ router.get("/getlastblocks", (req, res) => {
     for(let i=blocks-5; i<=blocks; i++) {
       getblockhash(i, (hash) => {
         getblock(hash, (block) => {
-          //console.log(block);
-          result["result"].push({ "id": i, "hash": hash, "time": block["time"] });
+          //console.log(result);
+          var date = new Date(block["time"] * 1000)
+          result["result"].push({ "id": i, "hash": hash, "time": date.toGMTString() });
+          result["result"].sort((a, b) => { return a["id"] < b["id"] ? 1 : -1 })
           if(i == blocks) res.send(result);
         });
         //console.log(i);
@@ -179,6 +181,7 @@ router.get("/getlastblocks", (req, res) => {
 
 router.get("/gettransaction/:txid", (req, res) => {
   //res.json({ msg: req.params["txid"] })
+  //console.log(req.params["txid"])
   getrawtransaction(req.params["txid"], (rawtx, error) => {
     //console.log("gettx result");
     if(error) {
